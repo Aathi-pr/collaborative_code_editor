@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CodeFusion - Premium Code Editor{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<nav class="navbar glass-effect">
+    <div class="nav-container container">
+        <a href="{% url 'home' %}" class="logo">
+            <div class="logo-icon">L</div>
+            <span>Logo</span>
+        </a>
+        
+        <button class="hamburger" aria-label="Menu" aria-expanded="false">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
+
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#languages" class="nav-link">Languages</a>
+            <a href="{% url 'login' %}" class="nav-link">Login</a>
+            <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Code with <span class="gradient-text">precision.</span><br>Build with purpose.</h1>
+                <p>Experience the next evolution of coding with our minimalist, powerful editor designed for modern developers.</p>
+                <a href="{% url 'signup' %}" class="cta-button">Start Coding Free</a>
+            </div>
+            <div class="code-preview">
+                <div class="code-window">
+                    <div class="window-header">
+                        <span class="window-control control-close"></span>
+                        <span class="window-control control-minimize"></span>
+                        <span class="window-control control-maximize"></span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code>// Welcome to CodeFusion
+function createProject() {
+  const project = {
+    name: 'NextGen App',
+    stack: {
+      frontend: 'React',
+      backend: 'Node.js',
+      database: 'PostgreSQL'
+    },
+    features: [
+      'Real-time sync',
+      'Cloud deployment',
+      'AI assistance'
+    ]
+  };
+
+  return project;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="features-grid">
+            <div class="feature-card glow-effect">
+                <div class="feature-content">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Experience instant code execution and real-time collaboration with zero latency.</p>
+                </div>
+            </div>
+            <div class="feature-card glow-effect">
+                <div class="feature-content">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Intelligent Suggestions</h3>
+                    <p>AI-powered code completion and suggestions that learn from your coding style.</p>
+                </div>
+            </div>
+            <div class="feature-card glow-effect">
+                <div class="feature-content">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Enterprise Security</h3>
+                    <p>Bank-grade encryption and isolated environments for your code and data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/homejs' %}"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const backdrop = document.querySelector('.menu-backdrop');
+            const body = document.body;
+
+            function closeMenu() {
+                hamburger.classList.remove('is-active');
+                navLinks.classList.remove('is-active');
+                backdrop.classList.remove('is-active');
+                body.classList.remove('menu-open');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
+
+            function openMenu() {
+                hamburger.classList.add('is-active');
+                navLinks.classList.add('is-active');
+                backdrop.classList.add('is-active');
+                body.classList.add('menu-open');
+                hamburger.setAttribute('aria-expanded', 'true');
+            }
+
+            hamburger.addEventListener('click', () => {
+                if (hamburger.classList.contains('is-active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
+
+            // Close menu when clicking backdrop
+            backdrop.addEventListener('click', closeMenu);
+
+            // Close menu when pressing Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navLinks.classList.contains('is-active')) {
+                    closeMenu();
+                }
+            });
+
+            // Close menu when resizing window beyond mobile breakpoint
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                }
+            });
+
+            // Handle navbar background on scroll
+            function updateNavbar() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(5, 5, 5, 0.95)';
+                } else {
+                    navbar.style.background = 'var(--bg-primary)';
+                }
+            }
+
+            window.addEventListener('scroll', updateNavbar);
+            updateNavbar(); // Initial call
+        });
+</script>
+{% endblock %}

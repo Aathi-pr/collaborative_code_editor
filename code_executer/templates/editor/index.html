@@ -1,0 +1,106 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <title>Collaborative Code Editor</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Include CodeMirror and other dependencies -->
+  </head>
+  <body>
+    <div class="editor-container">
+      <div class="controls">
+        <select id="language-select">
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="java">Java</option>
+          <option value="cpp">C++</option>
+        </select>
+        <button id="run-btn">Run</button>
+        <button id="save-btn">Save</button>
+        <button id="share-btn">Share</button>
+      </div>
+      <div id="editor"></div>
+      <div class="output-container">
+        <pre id="output"></pre>
+      </div>
+    </div>
+
+    <script>
+      // WebSocket connection
+      const roomId = "{{ room_id }}";
+      const ws = new WebSocket(
+        `ws://${window.location.host}/ws/code/${roomId}/`,
+      );
+
+      // Initialize CodeMirror
+      const editor = CodeMirror(document.getElementById("editor"), {
+        mode: "python",
+        theme: "monokai",
+        lineNumbers: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+      });
+
+      // WebSocket handlers
+      ws.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        if (data.code) {
+          editor.setValue(data.code);
+        }
+      };
+
+      // Editor change handler
+      editor.on("change", function (cm, change) {
+        if (change.origin !== "setValue") {
+          ws.send(
+            JSON.stringify({
+              code: cm.getValue(),
+              language: document.getElementById("language-select").value,
+            }),
+          );
+        }
+      });
+
+      // Run button handler
+      document.getElementById("run-btn").addEventListener("click", function () {
+        const code = editor.getValue();
+        const language = document.getElementById("language-select").value;
+
+        fetch("/execute/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: `code=${encodeURIComponent(code)}&language=${language}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.output) {
+              document.getElementById("output").textContent = data.output;
+            } else {
+              document.getElementById("output").textContent = data.error;
+            }
+          });
+      });
+
+      // Helper function to get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="brand">
+                <div class="logo-icon">⚡</div>
+                <h1>CodeFusion</h1>
+            </div>
+            <div class="auth-content">
+                <h2>Join Our Coding Community</h2>
+                <p class="auth-description">Experience the next generation of collaborative coding with AI-powered features and real-time collaboration.</p>
+                
+                <form action="{% url 'signup' %}" method="post" class="auth-form">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="input-wrapper">
+                                {{ field }}
+                                <span class="input-icon">
+                                    <!-- Add appropriate icon based on field -->
+                                    {% if field.name == 'username' %}👤
+                                    {% elif field.name == 'email' %}📧
+                                    {% elif 'password' in field.name %}🔒
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if field.errors %}
+                            <div class="field-errors">
+                                {% for error in field.errors %}
+                                <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span>Create Account</span>
+                        
+                    </button>
+                </form>
+
+                <div class="auth-separator">
+                    <span>or continue with</span>
+                </div>
+
+                <p class="auth-links">
+                    Already have an account? <a href="{% url 'login' %}">Sign In</a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="auth-right">
+            <div class="features-preview">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Collaboration</h3>
+                    <p>Code together with your team in real-time</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Assistance</h3>
+                    <p>Get intelligent code suggestions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Environment</h3>
+                    <p>Your code is always protected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+    // Form submission handling
+    const form = document.querySelector('.auth-form');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = this.querySelector('.btn-primary');
+        submitBtn.classList.add('loading');
+        
+        try {
+            // Add your form submission logic here
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+            this.submit();
+        } catch (error) {
+            console.error('Signup error:', error);
+            submitBtn.classList.remove('loading');
+        }
+    });
+
+    // Input focus effects
+    const inputs = document.querySelectorAll('.input-wrapper input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+});
+</script>

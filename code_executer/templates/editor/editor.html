@@ -1,0 +1,1805 @@
+
+{% load static %}
+
+{% block content %}
+<style>
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+    background: #ffffff;
+    color: #333;
+    font-size: 14px;
+}
+
+.content {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+/* Layout */
+.editor-workspace {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    height: 100vh;
+    background: #ffffff;
+}
+
+/* Sidebar */
+.sidebar {
+    background: #f5f5f5;
+    padding: 1.25rem;
+    border-right: 3px solid #333;
+}
+
+.file-manager h4 {
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Refined Button-54 Style */
+.button-54 {
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #333;
+    cursor: pointer;
+    border: 2px solid #333;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 1px 1px 0px 0px #333, 2px 2px 0px 0px #333, 3px 3px 0px 0px #333;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    background: #ffffff;
+    transition: all 0.1s ease;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-54:active {
+    box-shadow: 0px 0px 0px 0px;
+    top: 3px;
+    left: 3px;
+}
+
+/* Create File Button Specific */
+#create-file-btn.button-54 {
+    width: 100%;
+    margin-bottom: 1.25rem;
+}
+
+/* File List */
+#file-list {
+    list-style: none;
+}
+
+#file-list .list-group-item {
+    font-size: 0.85rem;
+    padding: 0.625rem;
+    margin-bottom: 0.5rem;
+    background: #ffffff;
+    border: 2px solid #333;
+    cursor: pointer;
+    height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+#file-list .list-group-item:hover {
+    background: #f0f0f0;
+}
+
+/* Main Content */
+.main-content {
+    display: grid;
+    grid-template-rows: 68px 1fr;
+    grid-template-columns: 1fr 300px;
+    height: 100vh;
+}
+
+/* Toolbar */
+.toolbar {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 3px solid #333;
+    background: #ffffff;
+    height: 68px;
+    align-items: center;
+}
+
+.toolbar-logo {
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-right: 1.5rem;
+}
+
+.toolbar-logo a {
+    color: #333;
+    text-decoration: none;
+}
+
+.auth-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+    margin-right: 1.5rem;
+}
+
+.user-welcome {
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    color: #333;
+}
+
+/* Language Selector */
+
+.language-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#language-selector {
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #333;
+    background: #ffffff;
+    box-shadow: 1px 1px 0px 0px #333, 2px 2px 0px 0px #333, 3px 3px 0px 0px #333;
+    height: 36px;
+    width: 120px;
+    cursor: pointer;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+/* Editor Section */
+.editor-section {
+    border-right: 3px solid #333;
+    position: relative;
+    height: calc(100vh - 68px);
+}
+
+.CodeMirror {
+    height: 100% !important;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    background: #ffffff;
+}
+
+.CodeMirror-gutters {
+    background: #f5f5f5;
+    border-right: 3px solid #333;
+    min-width: 40px;
+}
+
+.CodeMirror-linenumber {
+    padding: 0 8px;
+}
+
+/* Output Section */
+.output-section {
+    height: calc(100vh - 68px);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.output-header {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 3px solid #333;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+}
+
+.output-header h5 {
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+#output-content {
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    flex: 1;
+    overflow-y: auto;
+    background: #ffffff;
+}
+
+/* Active Users */
+.active-users {
+    margin-left: 1.5rem;
+    min-width: 150px;
+}
+
+.active-users h5 {
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.active-users ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.active-users li {
+    font-size: 0.85rem;
+    position: relative;
+    padding-left: 1rem;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.active-users li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border: 2px solid #333;
+    border-radius: 50%;
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 1fr 250px;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .editor-workspace {
+        grid-template-columns: 200px 1fr;
+    }
+    
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: 68px 1fr 300px;
+    }
+    
+    .editor-section {
+        border-right: none;
+        border-bottom: 3px solid #333;
+        height: auto;
+    }
+    
+    .output-section {
+        height: 300px;
+    }
+}
+
+
+/* Save Indicator */
+.save-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #333;
+    color: #fff;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #333;
+    box-shadow: 1px 1px 0px 0px #333, 2px 2px 0px 0px #333, 3px 3px 0px 0px #333;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+
+
+
+
+.chat-container {
+    width: 320px;
+    background: #ffffff;
+    border: 3px solid #000;
+    box-shadow: 1px 1px 0px 0px #000, 
+                2px 2px 0px 0px #000, 
+                3px 3px 0px 0px #000, 
+                4px 4px 0px 0px #000, 
+                5px 5px 0px 0px #000;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-family: "Open Sans", sans-serif;
+    z-index: 1000;
+}
+
+.chat-header {
+    padding: 0.75rem;
+    background: #ffffff;
+    border-bottom: 3px solid #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+#close-chat-btn {
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+    border: 2px solid;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px 1px 0px 0px #000;
+    background: #ffffff;
+    padding: 0;
+    transition: all 0.1s ease;
+}
+
+#close-chat-btn:active {
+    box-shadow: 0px 0px 0px 0px;
+    transform: translate(1px, 1px);
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #ffffff;
+    border-bottom: 3px solid #000;
+}
+
+.message {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    max-width: 85%;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.message.sent {
+    margin-left: auto;
+    background: #000;
+    color: #fff;
+    border: 2px solid #000;
+}
+
+.message.received {
+    margin-right: auto;
+    background: #ffffff;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px 0px #000;
+}
+
+.chat-input-container {
+    padding: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    background: #ffffff;
+}
+
+#chat-input {
+    flex: 1;
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    padding: 0.5rem;
+    border: 2px solid #000;
+    box-shadow: 1px 1px 0px 0px #000, 
+                2px 2px 0px 0px #000;
+    outline: none;
+}
+
+#chat-input:focus {
+    box-shadow: 1px 1px 0px 0px #000;
+    transform: translate(1px, 1px);
+}
+
+#send-chat-btn {
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    cursor: pointer;
+    border: 2px solid;
+    padding: 0.25em 0.5em;
+    box-shadow: 1px 1px 0px 0px #000, 
+                2px 2px 0px 0px #000, 
+                3px 3px 0px 0px #000;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    background: #ffffff;
+    white-space: nowrap;
+}
+
+#send-chat-btn:active {
+    box-shadow: 0px 0px 0px 0px;
+    top: 3px;
+    left: 3px;
+}
+
+.hidden {
+    display: none;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.file-delete-btn {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+.file-delete-btn:hover {
+    opacity: 1;
+    color: #f00;
+}
+
+.file-rename-btn {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 12px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+.file-rename-btn:hover {
+    opacity: 1;
+    color: #0066cc;
+}
+
+
+</style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<div class="editor-workspace">
+    <div class="sidebar">
+        <div class="file-manager">
+            <h4>Files</h4>
+            <button class="button-54" id="create-file-btn">New File</button>
+            <ul id="file-list" class="list-group"></ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <!-- Logo -->
+            <div class="toolbar-logo">
+                <a href="{% url 'home' %}">CodeCollab</a>
+            </div>
+
+            <!-- Language Group -->
+            <div class="language-group">
+                <select id="language-selector">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                </select>
+            </div>
+
+            <!-- Auth Group -->
+            <div class="auth-group">
+                {% if user.is_authenticated %}
+                    <span class="user-welcome">Welcome, {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="button-54">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="button-54">Login</a>
+                    <a href="{% url 'signup' %}" class="button-54">Sign Up</a>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+<button class="button-54" id="download-code-btn"><i class="fa-solid fa-arrow-down"></i></button>
+            	<button class="button-54" id="toggle-chat-btn"><i class="fa-solid fa-comments"></i></button>
+                <button class="button-54" id="share-room-btn"><i class="fa-solid fa-share-nodes"></i></button>
+                <button class="button-54" id="save-code-btn"><i class="fa-solid fa-floppy-disk"></i></button>
+                <button class="button-54" id="execute-code-btn"><i class="fa fa-play" aria-hidden="true" style="color: palegreen;"></i></button>
+            </div>
+
+            <!-- Active Users -->
+            <div class="active-users">
+                <h5>Active Users</h5>
+                <ul>
+                    {% for user in active_users %}
+                        <li>{{ user.user.username }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <textarea id="code-editor"></textarea>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <h5>Output</h5>
+            </div>
+            <pre id="output-content"></pre>
+        </div>
+    </div>
+</div>
+<div class="chat-container hidden">
+    <div class="chat-header">
+        <span>Chat</span>
+        <button id="close-chat-btn">✖</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Type a message...">
+        <button id="send-chat-btn" class="button-54">Send</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Include CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.js"></script>
+<!-- Addons for CodeMirror -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/mode/css/css.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Global variables
+    window.files = {};
+    window.currentFile = null;
+    let isReceivingUpdate = false;
+    let autoSaveTimer = null;
+    let needsDefaultFile = true;
+
+    // File manager DOM elements
+    const fileList = document.getElementById("file-list");
+    const createFileBtn = document.getElementById("create-file-btn");
+    
+    // Initialize CodeMirror
+    const codeEditor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+        lineNumbers: true,
+        mode: "python",
+        theme: "monokai",
+        indentUnit: 4,
+        tabSize: 4,
+        smartIndent: true,
+        indentWithTabs: false,
+        electricChars: true,
+        lineWrapping: true,
+        firstLineNumber: 1,
+        fixedGutter: true,
+        gutters: [
+            "CodeMirror-linenumbers",
+            "CodeMirror-foldgutter",
+            "CodeMirror-lint-markers",
+        ],
+        foldGutter: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        autoCloseTags: true,
+        highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
+        extraKeys: {
+            "Ctrl-Space": "autocomplete",
+            "Ctrl-/": "toggleComment",
+            "Ctrl-F": "findPersistent",
+            "Ctrl-H": "replace",
+            "Alt-F": "findNext",
+            "Alt-G": "jumpToLine",
+            "Ctrl-J": "toMatchingTag",
+            "F11": function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            "Esc": function (cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            },
+        },
+    });
+
+    // Create the FileManager class
+    class FileManager {
+        constructor(codeEditor, fileList) {
+            this.codeEditor = codeEditor;
+            this.fileList = fileList;
+            
+            // Add event listener for file selection
+            this.fileList.addEventListener("click", (event) => {
+                if (event.target.classList.contains("list-group-item") || event.target.classList.contains("file-name")) {
+                    // Get the list item, whether they clicked on the item itself or the filename span
+                    const listItem = event.target.classList.contains("list-group-item") ? 
+                                      event.target : event.target.closest(".list-group-item");
+                    
+                    if (listItem) {
+                        this.selectFile(listItem);
+                    }
+                }
+            });
+        }
+        
+        // Add a new file to the sidebar
+        addFileToSidebar(filename) {
+            const fileItem = document.createElement("li");
+            fileItem.className = "list-group-item";
+            
+            // Create file name span
+            const fileNameSpan = document.createElement("span");
+            fileNameSpan.className = "file-name";
+            fileNameSpan.textContent = filename;
+            fileItem.appendChild(fileNameSpan);
+            
+            // Create actions container
+            const actionsSpan = document.createElement("span");
+            actionsSpan.className = "file-actions";
+            
+            // Create rename button
+            const renameBtn = document.createElement("button");
+            renameBtn.className = "file-rename-btn";
+            renameBtn.innerHTML = "✎";  // Pencil icon
+            renameBtn.title = "Rename file";
+            renameBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: #333;
+                font-size: 12px;
+                cursor: pointer;
+                width: 18px;
+                height: 18px;
+                line-height: 1;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.7;
+            `;
+            renameBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent file selection when clicking rename
+                this.renameFile(filename);
+            });
+            renameBtn.addEventListener("mouseover", () => {
+                renameBtn.style.opacity = "1";
+                renameBtn.style.color = "#0066cc";
+            });
+            renameBtn.addEventListener("mouseout", () => {
+                renameBtn.style.opacity = "0.7";
+                renameBtn.style.color = "#333";
+            });
+            
+            // Create delete button
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "file-delete-btn";
+            deleteBtn.innerHTML = "×";
+            deleteBtn.title = "Delete file";
+            deleteBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: #333;
+                font-size: 14px;
+                cursor: pointer;
+                width: 18px;
+                height: 18px;
+                line-height: 1;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.7;
+            `;
+            deleteBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.deleteFile(filename);
+            });
+            deleteBtn.addEventListener("mouseover", () => {
+                deleteBtn.style.opacity = "1";
+                deleteBtn.style.color = "#f00";
+            });
+            deleteBtn.addEventListener("mouseout", () => {
+                deleteBtn.style.opacity = "0.7";
+                deleteBtn.style.color = "#333";
+            });
+            
+            actionsSpan.appendChild(renameBtn);
+            actionsSpan.appendChild(deleteBtn);
+            fileItem.appendChild(actionsSpan);
+            
+            // Style the list item for proper layout
+            fileItem.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+            
+            // Style the filename span
+            fileNameSpan.style.cssText = `
+                flex-grow: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            `;
+            
+            // Style the actions container
+            actionsSpan.style.cssText = `
+                display: flex;
+                gap: 4px;
+                margin-left: 8px;
+            `;
+            
+            fileItem.dataset.filename = filename;
+            this.fileList.appendChild(fileItem);
+            
+            // Make the newly added file the current file
+            this.selectFile(fileItem);
+        }
+        
+        // Select a file
+        selectFile(fileItem) {
+            // Save current file content before switching
+            this.saveCurrentFile();
+            
+            // Remove active class from all files
+            const allFiles = this.fileList.querySelectorAll(".list-group-item");
+            allFiles.forEach(item => item.classList.remove("active"));
+            
+            // Add active class to selected file
+            fileItem.classList.add("active");
+            
+            // Set current file and update editor
+            window.currentFile = fileItem.dataset.filename;
+            this.codeEditor.setValue(window.files[window.currentFile] || "");
+            this.setEditorMode(window.currentFile);
+            
+            // Focus editor
+            this.codeEditor.focus();
+        }
+        
+        // Save current file content
+        saveCurrentFile() {
+            if (window.currentFile) {
+                window.files[window.currentFile] = this.codeEditor.getValue();
+                
+                // If editorSync exists, broadcast the file update
+                if (window.editorSync) {
+                    window.editorSync.sendMessage({
+                        type: "file_update",
+                        action: "update",
+                        filename: window.currentFile,
+                        content: window.files[window.currentFile],
+                        user: window.editorSync.userId
+                    });
+                }
+            }
+        }
+        
+        // Set editor mode based on file extension
+        setEditorMode(filename) {
+            const extension = this.getFileExtension(filename);
+            const extensionModes = {
+                "js": "javascript",
+                "py": "python",
+                "html": "htmlmixed",
+                "css": "css",
+                "json": "javascript",
+                "md": "markdown",
+                "txt": "text",
+                "xml": "xml",
+                "sql": "sql",
+                "php": "php",
+                "java": "text/x-java",
+                "c": "text/x-csrc",
+                "cpp": "text/x-c++src",
+                "rb": "ruby",
+                "go": "go",
+                "ts": "text/typescript"
+            };
+            
+            const mode = extensionModes[extension] || "text";
+            this.codeEditor.setOption("mode", mode);
+            
+            // Update language selector if it exists
+            const languageSelector = document.getElementById("language-selector");
+            if (languageSelector) {
+                if (mode === "htmlmixed") {
+                    languageSelector.value = "html";
+                } else if (extensionModes[extension]) {
+                    languageSelector.value = mode === "text/x-java" ? "java" : 
+                                            mode === "text/x-csrc" ? "c" :
+                                            mode === "text/x-c++src" ? "cpp" :
+                                            mode === "text/typescript" ? "typescript" : mode;
+                }
+            }
+        }
+        
+        // Get file extension
+        getFileExtension(filename) {
+            return filename.split('.').pop().toLowerCase();
+        }
+        
+        // Rename a file
+        renameFile(oldFilename) {
+            const newFilename = prompt(`Rename ${oldFilename} to:`, oldFilename);
+            
+            if (!newFilename || newFilename === oldFilename) {
+                return; // User cancelled or no change
+            }
+            
+            if (!newFilename.includes(".")) {
+                window.editorSync.showErrorNotification("Please include a file extension (e.g. .js, .py, .html)");
+                return;
+            }
+            
+            if (window.files[newFilename]) {
+                window.editorSync.showErrorNotification("A file with this name already exists.");
+                return;
+            }
+            
+            // Add new file with old content
+            window.files[newFilename] = window.files[oldFilename];
+            
+            // Remove old file
+            delete window.files[oldFilename];
+            
+            // Update current file reference if needed
+            if (window.currentFile === oldFilename) {
+                window.currentFile = newFilename;
+            }
+            
+            // Send rename event to other users
+            window.editorSync.sendMessage({
+                type: "file_update",
+                action: "rename",
+                filename: oldFilename,
+                newFilename: newFilename,
+                user: window.editorSync.userId
+            });
+            
+            // Update UI
+            this.updateFileList(newFilename);
+            
+            window.editorSync.showNotification(`Renamed ${oldFilename} to ${newFilename}`, "info");
+        }
+        
+        // Delete a file
+        deleteFile(filename) {
+            if (confirm(`Are you sure you want to delete ${filename}?`)) {
+                // Remove from local files object
+                delete window.files[filename];
+                
+                // Send delete event to other users
+                window.editorSync.sendMessage({
+                    type: "file_update",
+                    action: "delete",
+                    filename: filename,
+                    user: window.editorSync.userId
+                });
+                
+                // Update UI
+                this.updateFileList();
+                
+                // If the deleted file was current, select another file
+                if (window.currentFile === filename) {
+                    window.currentFile = null;
+                    if (Object.keys(window.files).length > 0) {
+                        const newFile = Object.keys(window.files)[0];
+                        const fileEl = this.fileList.querySelector(`.list-group-item[data-filename="${newFile}"]`);
+                        if (fileEl) this.selectFile(fileEl);
+                    } else {
+                        this.codeEditor.setValue("");
+                    }
+                }
+                
+                window.editorSync.showNotification(`Deleted ${filename}`, "info");
+            }
+        }
+        
+        // Update the file list display
+        updateFileList(selectFilename = null) {
+            // Clear current list
+            this.fileList.innerHTML = "";
+            
+            // Add files from the files object
+            for (const filename in window.files) {
+                const fileItem = document.createElement("li");
+                fileItem.className = "list-group-item";
+                
+                // Create file name span
+                const fileNameSpan = document.createElement("span");
+                fileNameSpan.className = "file-name";
+                fileNameSpan.textContent = filename;
+                fileItem.appendChild(fileNameSpan);
+                
+                // Create actions container
+                const actionsSpan = document.createElement("span");
+                actionsSpan.className = "file-actions";
+                
+                // Create rename button
+                const renameBtn = document.createElement("button");
+                renameBtn.className = "file-rename-btn";
+                renameBtn.innerHTML = "✎";  // Pencil icon
+                renameBtn.title = "Rename file";
+                renameBtn.style.cssText = `
+                    background: none;
+                    border: none;
+                    color: #333;
+                    font-size: 12px;
+                    cursor: pointer;
+                    width: 18px;
+                    height: 18px;
+                    line-height: 1;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 0.7;
+                `;
+                renameBtn.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent file selection when clicking rename
+                    this.renameFile(filename);
+                });
+                renameBtn.addEventListener("mouseover", () => {
+                    renameBtn.style.opacity = "1";
+                    renameBtn.style.color = "#0066cc";
+                });
+                renameBtn.addEventListener("mouseout", () => {
+                    renameBtn.style.opacity = "0.7";
+                    renameBtn.style.color = "#333";
+                });
+                
+                // Create delete button
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "file-delete-btn";
+                deleteBtn.innerHTML = "×";
+                deleteBtn.title = "Delete file";
+                deleteBtn.style.cssText = `
+                    background: none;
+                    border: none;
+                    color: #333;
+                    font-size: 14px;
+                    cursor: pointer;
+                    width: 18px;
+                    height: 18px;
+                    line-height: 1;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 0.7;
+                `;
+                deleteBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    this.deleteFile(filename);
+                });
+                deleteBtn.addEventListener("mouseover", () => {
+                    deleteBtn.style.opacity = "1";
+                    deleteBtn.style.color = "#f00";
+                });
+                deleteBtn.addEventListener("mouseout", () => {
+                    deleteBtn.style.opacity = "0.7";
+                    deleteBtn.style.color = "#333";
+                });
+                
+                actionsSpan.appendChild(renameBtn);
+                actionsSpan.appendChild(deleteBtn);
+                fileItem.appendChild(actionsSpan);
+                
+                // Style the list item for proper layout
+                fileItem.style.cssText = `
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                `;
+                
+                // Style the filename span
+                fileNameSpan.style.cssText = `
+                    flex-grow: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                `;
+                
+                // Style the actions container
+                actionsSpan.style.cssText = `
+                    display: flex;
+                    gap: 4px;
+                    margin-left: 8px;
+                `;
+                
+                fileItem.dataset.filename = filename;
+                
+                if (filename === window.currentFile) {
+                    fileItem.classList.add("active");
+                }
+                
+                this.fileList.appendChild(fileItem);
+            }
+            
+            // If a specific file should be selected, find and select it
+            if (selectFilename) {
+                const fileItems = this.fileList.querySelectorAll(".list-group-item");
+                for (const item of fileItems) {
+                    if (item.dataset.filename === selectFilename) {
+                        this.selectFile(item);
+                        break;
+                    }
+                }
+            }
+            // If no file is selected but we have files, select the first one
+            else if (window.currentFile === null && this.fileList.children.length > 0) {
+                this.selectFile(this.fileList.children[0]);
+            }
+        }
+        
+        // Create a new file
+        createFile(filename, content = "") {
+            if (!filename || !filename.includes(".")) {
+                window.editorSync.showErrorNotification("Please include a file extension (e.g. .js, .py, .html)");
+                return false;
+            }
+            
+            if (window.files[filename]) {
+                window.editorSync.showErrorNotification("A file with this name already exists.");
+                return false;
+            }
+            
+            window.files[filename] = content;
+            
+            // Send file creation event to other users
+            window.editorSync.sendMessage({
+                type: "file_update",
+                action: "create",
+                filename: filename,
+                content: content,
+                user: window.editorSync.userId
+            });
+            
+            this.addFileToSidebar(filename);
+            
+            return true;
+        }
+        
+        // Download current file
+        downloadCurrentFile() {
+            if (!window.currentFile) {
+                window.editorSync.showErrorNotification("No file selected to download");
+                return;
+            }
+
+            const code = this.codeEditor.getValue();
+            if (!code.trim()) {
+                window.editorSync.showErrorNotification("File is empty. Nothing to download.");
+                return;
+            }
+
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = window.currentFile;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+            
+            window.editorSync.showNotification(`Downloaded ${window.currentFile}`, "success");
+        }
+    }
+
+    // Get necessary variables from Django template
+    const getRoomId = () => {
+        const roomIdElement = document.getElementById("room-id");
+        const urlParams = new URLSearchParams(window.location.search);
+        return roomIdElement?.value || urlParams.get("room") || "{{ room_id }}";
+    };
+
+    const getUserId = () => {
+        const userIdElement = document.getElementById("user-id");
+        return userIdElement?.value || "{{ request.user.id }}";
+    };
+
+    const getCsrfToken = () => {
+        const metaToken = document.querySelector('meta[name="csrf-token"]');
+        const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        return metaToken?.content || csrfInput?.value || "{{ csrf_token }}";
+    };
+
+    const roomId = getRoomId();
+    const userId = getUserId();
+    const csrfToken = getCsrfToken();
+
+    // Validate required values
+    if (!roomId) {
+        console.error("Room ID not found");
+        alert("Error: Room ID is required");
+        return;
+    }
+
+    class EditorSync {
+        constructor(roomId, editor, userId) {
+            this.roomId = roomId;
+            this.editor = editor;
+            this.userId = userId;
+            this.socket = null;
+            this.reconnectAttempts = 0;
+            this.messageQueue = [];
+            this.isConnected = false;
+            this.setupWebSocket();
+            this.setupAutoSave();
+        }
+
+        setupWebSocket() {
+            const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+            this.socket = new WebSocket(`${protocol}//${window.location.host}/ws/editor/${this.roomId}/`);
+
+            this.socket.onopen = () => {
+                console.log("WebSocket connected");
+                this.isConnected = true;
+                this.reconnectAttempts = 0;
+                this.requestLatestCode();
+                this.processMessageQueue();
+            };
+
+            this.socket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    this.handleWebSocketMessage(data);
+                } catch (error) {
+                    console.error("JSON Parse Error:", error);
+                    this.showErrorNotification("Failed to process server message");
+                }
+            };
+
+            this.socket.onclose = (event) => {
+                this.isConnected = false;
+                console.warn(`WebSocket disconnected (Code: ${event.code}). Retrying...`);
+                this.reconnectWithBackoff();
+            };
+
+            this.socket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+                this.isConnected = false;
+            };
+        }
+
+        reconnectWithBackoff() {
+            const maxDelay = 30000; // Maximum delay of 30 seconds
+            const delay = Math.min(maxDelay, Math.min(5000, 2 ** this.reconnectAttempts * 1000));
+            setTimeout(() => {
+                if (!this.isConnected) {
+                    console.log(`Reconnecting... Attempt ${this.reconnectAttempts + 1}`);
+                    this.reconnectAttempts++;
+                    this.setupWebSocket();
+                }
+            }, delay);
+        }
+
+        handleWebSocketMessage(data) {
+            if (!data || !data.type) {
+                console.warn("Received message without type");
+                return;
+            }
+
+            switch (data.type) {
+                case 'initial_state':
+                    if (data.files) {
+                        window.files = data.files;
+                        
+                        // Set current file from server data
+                        if (data.currentFile) {
+                            window.currentFile = data.currentFile;
+                        }
+                        
+                        // Update the file list
+                        window.fileManager.updateFileList(window.currentFile);
+                        needsDefaultFile = Object.keys(window.files).length === 0;
+                    }
+                    
+                    if (data.code) {
+                        this.applyCodeUpdate({
+                            code: data.code,
+                            language: data.language
+                        });
+                    }
+                    if (data.chat_history && window.chatSystem) {
+                        window.chatSystem.loadChatHistory(data.chat_history);
+                    }
+                    break;
+
+                case 'code_update':
+                    if (data.user !== this.userId) {
+                        this.applyCodeUpdate(data);
+                    }
+                    break;
+
+                case 'chat_message':
+                    if (data.user !== this.userId && window.chatSystem) {
+                        window.chatSystem.handleChatMessage(data);
+                    }
+                    break;
+                    
+                case 'file_update':
+                    this.handleFileUpdate(data);
+                    break;
+
+                case 'room_state':
+                    // Handle room state updates (users, settings, etc.)
+                    console.log("Room state updated:", data);
+                    if (data.files) {
+                        window.files = data.files;
+                        window.fileManager.updateFileList(window.currentFile);
+                    }
+                    this.handleRoomStateUpdate(data);
+                    break;
+
+                case 'error':
+                    console.error('Server error:', data.message);
+                    // Don't show notification for "Failed to send message" errors - they're handled separately
+                    if (data.message && !data.message.includes("Failed to send message")) {
+                        this.showErrorNotification(data.message);
+                    }
+                    break;
+                    
+                default:
+                    console.log('Received message with unknown type:', data.type, data);
+                    break;
+            }
+        }
+
+        createFile(filename, content = "") {
+            return window.fileManager.createFile(filename, content);
+        }
+
+        handleFileUpdate(data) {
+            // Don't ignore our own updates - we need to process server confirmation
+            
+            switch(data.action) {
+                case "create":
+                    // Only update if file doesn't exist or if coming from different user
+                    if (!window.files[data.filename] || data.user !== this.userId) {
+                        window.files[data.filename] = data.content;
+                        window.fileManager.updateFileList(data.user !== this.userId ? null : data.filename);
+                        
+                        if (data.user !== this.userId) {
+                            this.showNotification(`${data.username || 'Someone'} created file: ${data.filename}`);
+                        }
+                    }
+                    break;
+                    
+                case "update":
+                    window.files[data.filename] = data.content;
+                    
+                    // If this is the current file and update is from another user, update editor content
+                    if (window.currentFile === data.filename && data.user !== this.userId) {
+                        isReceivingUpdate = true;
+                        const currentCursor = this.editor.getCursor();
+                        const scrollInfo = this.editor.getScrollInfo();
+                        
+                        this.editor.setValue(data.content);
+                        
+                        this.editor.setCursor(currentCursor);
+                        this.editor.scrollTo(scrollInfo.left, scrollInfo.top);
+                        isReceivingUpdate = false;
+                    }
+                    break;
+                    
+                case "delete":
+                    delete window.files[data.filename];
+                    window.fileManager.updateFileList();
+                    
+                    if (data.user !== this.userId) {
+                        this.showNotification(`${data.username || 'Someone'} deleted file: ${data.filename}`);
+                    }
+                    break;
+                    
+                case "rename":
+                    window.files[data.newFilename] = window.files[data.filename];
+                    delete window.files[data.filename];
+                    
+                    if (window.currentFile === data.filename) {
+                        window.currentFile = data.newFilename;
+                    }
+                    
+                    window.fileManager.updateFileList(window.currentFile);
+                    
+                    if (data.user !== this.userId) {
+                        this.showNotification(`${data.username || 'Someone'} renamed file: ${data.filename} to ${data.newFilename}`);
+                    }
+                    break;
+            }
+        }
+
+        handleRoomStateUpdate(data) {
+            // Handle room state information such as active users, room settings, etc.
+            if (data.users) {
+                // Update UI for active users if you have that feature
+                this.updateActiveUsers(data.users);
+            }
+            
+            if (data.settings) {
+                // Apply any room settings updates
+                this.applyRoomSettings(data.settings);
+            }
+
+            // Emit a custom event that other components can listen for
+            document.dispatchEvent(new CustomEvent('roomStateUpdated', { detail: data }));
+        }
+
+        updateActiveUsers(users) {
+            // Implement if you have a UI element for showing active users
+            const activeUsersElement = document.querySelector(".active-users ul");
+            if (activeUsersElement) {
+                activeUsersElement.innerHTML = '';
+                
+                users.forEach(user => {
+                    const userElement = document.createElement('li');
+                    userElement.textContent = this.escapeHtml(user.username || 'Anonymous');
+                    activeUsersElement.appendChild(userElement);
+                });
+            }
+        }
+
+        applyRoomSettings(settings) {
+            // Apply any room-wide settings
+            if (settings.readOnly === true) {
+                this.editor.setOption('readOnly', 'nocursor');
+                this.showNotification("This document is now read-only", "info");
+            } else if (settings.readOnly === false) {
+                this.editor.setOption('readOnly', false);
+                this.showNotification("You can now edit this document", "info");
+            }
+            
+            // Apply any other settings as needed
+        }
+
+        escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return String(unsafe)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        applyCodeUpdate(data) {
+            isReceivingUpdate = true;
+            const currentCursor = this.editor.getCursor();
+            const scrollInfo = this.editor.getScrollInfo();
+            
+            this.editor.setValue(data.code);
+            
+            // Restore cursor and scroll position
+            this.editor.setCursor(currentCursor);
+            this.editor.scrollTo(scrollInfo.left, scrollInfo.top);
+            
+            isReceivingUpdate = false;
+
+            // Update language selector if language changed
+            const languageSelector = document.getElementById("language-selector");
+            if (data.language && languageSelector.value !== data.language) {
+                languageSelector.value = data.language;
+            }
+        }
+
+        setupAutoSave() {
+            let lastContent = this.editor.getValue();
+            
+            this.editor.on("change", () => {
+                if (!isReceivingUpdate && window.currentFile) {
+                    clearTimeout(autoSaveTimer);
+                    
+                    // Only save if content has actually changed
+                    const currentContent = this.editor.getValue();
+                    if (currentContent !== lastContent) {
+                        window.files[window.currentFile] = currentContent;
+                        
+                        autoSaveTimer = setTimeout(() => {
+                            this.sendMessage({
+                                type: "file_update",
+                                action: "update",
+                                filename: window.currentFile,
+                                content: currentContent,
+                                user: this.userId
+                            });
+                            
+                            lastContent = currentContent;
+                            this.showSaveIndicator();
+                        }, 1000);
+                    }
+                }
+            });
+        }
+        async saveCode() {
+            if (!window.currentFile) {
+                this.showErrorNotification("No file selected. Please select or create a file first.");
+                return;
+            }
+            
+            // Make sure the current file content is up to date
+            window.fileManager.saveCurrentFile();
+            
+            try {
+                const response = await fetch("/save-code/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken,
+                    },
+                    body: JSON.stringify({
+                        room_id: this.roomId,
+                        code: this.editor.getValue(),
+                        language: document.getElementById("language-selector").value,
+                        filename: window.currentFile
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                this.showSaveIndicator();
+            } catch (error) {
+                console.error("Save failed:", error);
+                this.showErrorNotification("Failed to save code. Please try again.");
+            }
+        }
+
+        sendMessage(message) {
+            if (this.isConnected && this.socket && this.socket.readyState === WebSocket.OPEN) {
+                try {
+                    this.socket.send(JSON.stringify(message));
+                } catch (error) {
+                    console.error("Failed to send message:", error);
+                    this.messageQueue.push(message); // Queue the message for retry
+                }
+            } else {
+                console.warn("WebSocket not connected, queuing message...");
+                this.messageQueue.push(message); // Store message until reconnect
+            }
+        }
+
+        processMessageQueue() {
+            while (this.messageQueue.length > 0 && this.isConnected) {
+                const message = this.messageQueue.shift();
+                this.sendMessage(message);
+            }
+        }
+
+        requestLatestCode() {
+            this.sendMessage({ type: "request_latest" });
+        }
+
+        showSaveIndicator() {
+            this.showNotification("Auto-saved", "success");
+        }
+
+        showErrorNotification(message) {
+            this.showNotification(message, "error");
+        }
+
+        showNotification(message, type = "success") {
+            const notification = document.createElement("div");
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${
+                    type === "success" ? "rgba(0, 128, 0, 0.8)" : 
+                    type === "error" ? "rgba(255, 0, 0, 0.8)" : 
+                    type === "info" ? "rgba(0, 0, 255, 0.8)" : 
+                    "rgba(128, 128, 128, 0.8)"
+                };
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 14px;
+                opacity: 1;
+                transition: opacity 0.5s ease-in-out;
+                z-index: 1000;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = "0";
+                setTimeout(() => notification.remove(), 500);
+            }, 2000);
+        }
+
+        cleanup() {
+            if (this.socket) {
+                this.socket.close();
+            }
+            clearTimeout(autoSaveTimer);
+        }
+    }
+
+    class ChatSystem {
+        constructor(roomId, userId) {
+            this.roomId = roomId;
+            this.userId = userId;
+            this.messages = document.getElementById("chat-messages");
+            this.input = document.getElementById("chat-input");
+            this.sendButton = document.getElementById("send-chat-btn");
+            this.toggleButton = document.getElementById("toggle-chat-btn");
+            this.closeButton = document.getElementById("close-chat-btn");
+            this.container = document.querySelector(".chat-container");
+            
+            this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+            this.sendButton.addEventListener("click", () => this.sendMessage());
+            this.input.addEventListener("keypress", (event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    this.sendMessage();
+                }
+            });
+            
+            this.toggleButton.addEventListener("click", () => {
+                this.container.classList.toggle("hidden");
+            });
+            
+            this.closeButton.addEventListener("click", () => {
+                this.container.classList.add("hidden");
+            });
+        }
+
+        loadChatHistory(messages) {
+            // Clear existing messages
+            this.messages.innerHTML = '';
+            
+            // Display messages in reverse chronological order
+            if (Array.isArray(messages)) {
+                messages.reverse().forEach(msg => {
+                    this.displayMessage(
+                        msg.message,
+                        msg.user,
+                        msg.user === "You" || msg.user === this.userId,
+                        new Date(msg.timestamp)
+                    );
+                });
+            } else {
+                console.warn("Chat history is not an array:", messages);
+            }
+        }
+
+        handleChatMessage(data) {
+            this.displayMessage(
+                data.message,
+                data.username || data.user || 'Anonymous',
+                false,
+                data.timestamp ? new Date(data.timestamp) : new Date()
+            );
+        }
+
+        sendMessage() {
+            const message = this.input.value.trim();
+            if (!message) return;
+
+            window.editorSync.sendMessage({
+                type: "chat_message",
+                message: message,
+                user: this.userId
+            });
+
+            this.displayMessage(message, "You", true);
+            this.input.value = "";
+        }
+
+        displayMessage(message, user, isSent = false, timestamp = new Date()) {
+            if (!this.messages) {
+                console.error("Chat messages element not found");
+                return;
+            }
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isSent ? "sent" : "received"}`;
+            messageDiv.innerHTML = `
+                <span class="user">${this.escapeHtml(user)}</span>
+                <span class="content">${this.escapeHtml(message)}</span>
+                <span class="time">${timestamp.toLocaleTimeString()}</span>
+            `;
+            
+            this.messages.appendChild(messageDiv);
+            this.messages.scrollTop = this.messages.scrollHeight;
+        }
+
+        escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return String(unsafe)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    }
+
+    // Initialize the file manager
+    const fileManager = new FileManager(codeEditor, fileList);
+    window.fileManager = fileManager;
+
+    // Initialize the editor sync and chat system
+    const editorSync = new EditorSync(roomId, codeEditor, userId);
+    window.editorSync = editorSync; // Make it globally accessible
+    
+    const chatSystem = new ChatSystem(roomId, userId);
+    window.chatSystem = chatSystem; // Make chatSystem accessible globally for WebSocket handlers
+
+    // Handle file creation
+    createFileBtn.addEventListener("click", function() {
+        const filename = prompt("Enter file name with extension (e.g. script.js, index.html):");
+        
+        if (!filename) return; // User cancelled
+        
+        // Use the FileManager method to create and share the file
+        if (window.fileManager.createFile(filename)) {
+            window.editorSync.showNotification(`Created ${filename}`, "success");
+        }
+    });
+
+    // Set up event listeners for the UI buttons
+    document.getElementById("language-selector").addEventListener("change", () => {
+        if (window.currentFile) {
+            window.fileManager.setEditorMode(window.currentFile);
+        }
+    });
+
+    document.getElementById("save-code-btn").addEventListener("click", () => {
+        editorSync.saveCode();
+    });
+
+    document.getElementById("execute-code-btn").addEventListener("click", async () => {
+        const code = codeEditor.getValue().trim();
+        const language = document.getElementById("language-selector").value;
+        const outputElement = document.getElementById("output-content");
+
+        if (!code) {
+            editorSync.showErrorNotification("Error: Code cannot be empty!");
+            return;
+        }
+
+        try {
+            const response = await fetch("/execute-code/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({
+                    room_id: roomId,
+                    code: code,
+                    language: language,
+                    filename: window.currentFile
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            outputElement.style.color = data.output?.error ? "red" : "green";
+            outputElement.textContent = data.output?.error || data.output?.output || "Execution completed.";
+        } catch (error) {
+            console.error("Execution error:", error);
+            outputElement.style.color = "red";
+            outputElement.textContent = `Error: ${error.message}`;
+        }
+    });
+
+    document.getElementById("share-room-btn").addEventListener("click", () => {
+        const roomUrl = `${window.location.origin}/editor/?room=${roomId}`;
+        navigator.clipboard.writeText(roomUrl)
+            .then(() => editorSync.showNotification("Room link copied! Share it with others."))
+            .catch(err => {
+                console.error("Failed to copy:", err);
+                editorSync.showErrorNotification("Failed to copy room link");
+            });
+    });
+
+    // Add download code button listener
+    document.getElementById("download-code-btn").addEventListener("click", () => {
+        fileManager.downloadCurrentFile();
+    });
+
+    // Create a default file if no files exist
+    setTimeout(() => {
+        if (needsDefaultFile) {
+            const defaultFile = "main.py";
+            if (!window.files[defaultFile]) {
+                window.fileManager.createFile(defaultFile, "# Write your code here\n\nprint('Hello, world!')");
+            }
+        }
+    }, 1000); // Small delay to ensure connection is established
+
+    // Clean up on page unload
+    window.addEventListener("beforeunload", () => editorSync.cleanup());
+});
+
+</script>
+
+{% endblock %}
